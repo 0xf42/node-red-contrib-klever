@@ -51,7 +51,6 @@
     "email": ""
   },
   "scripts": {
-    "playground": "node ./test/playground",
     "test": "mocha",
     "test_coverage": "nyc --reporter=text mocha",
     "test_coverage_html": "nyc --reporter=html mocha"
