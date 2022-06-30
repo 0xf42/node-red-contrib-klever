@@ -1,0 +1,361 @@
+<!--
+The MIT License (MIT)
+
+Copyright (c) 2022
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+-->
+
+<script type="text/javascript">
+  RED.nodes.registerType("klever-transaction", {
+    category: "Klever",
+    color: "#EE82EE",
+    icon: "klever.png",
+    defaults: {
+      account: {type: "klever-account", required: true},
+      name: {value: "", required: false},
+      contract: {value: "CONTRACT_TRANSFER", required: true},
+
+      transferReceiver: {value: ""},
+      transferAmount: {value: "1", required: true, validate:RED.validators.number()},
+      transferAsset: {value: "KLV"},
+
+      freezeAmount: {value: "10", required: true, validate:RED.validators.number()},
+      freezeAsset: {value: "KLV"},
+
+      unfreezeBucketID: {value: ""},
+      unfreezeAsset: {value: "KLV"},
+
+      delegateReceiver: {value: ""},
+      delegateBucketID: {value: ""},
+
+      undelegateBucketID: {value: ""},
+
+      claimClaimType: {value: 0},
+      claimId: {value: ""},
+
+      withdrawAssetId: {value: ""},
+
+      setaccountnameName: {value: ""}
+    },
+    inputs: 1,
+    outputs: 1,
+    paletteLabel: "Transaction",
+    labelStyle: function() {
+      return this.name ? "node_label_italic": "";
+    },
+    label: function() {
+      let name = this.name ? this.name : "Transaction";
+
+      var contractText = {
+        "CONTRACT_TRANSFER": "Transfer",
+        "CONTRACT_FREEZE": "Freeze",
+        "CONTRACT_UNFREEZE": "Unfreeze",
+        "CONTRACT_DELEGATE": "Delegate",
+        "CONTRACT_UNDELEGATE": "Undelegate",
+        "CONTRACT_CLAIM": "Claim",
+        "CONTRACT_WITHDRAW": "Withdraw",
+        "CONTRACT_UNJAIL": "Unjail",
+        "CONTRACT_SET_ACCOUNT_NAME": "Set Account Name",
+
+        "CONTRACT_MSG": "msg.contract"
+      };
+
+      return `${name} (${contractText[this.contract]})`;
+    },
+    oneditprepare: function() {
+      var that = this;
+
+      $("#node-input-contract").on("change", function() {
+        if ($(this).val() == "CONTRACT_TRANSFER") {
+          $(".node-type-transfer").show();
+          $(".node-type-freeze").hide();
+          $(".node-type-unfreeze").hide();
+          $(".node-type-delegate").hide();
+          $(".node-type-undelegate").hide();
+          $(".node-type-claim").hide();
+          $(".node-type-withdraw").hide();
+          $(".node-type-unjail").hide();
+          $(".node-type-setaccountname").hide();
+        }
+        else if ($(this).val() == "CONTRACT_FREEZE") {
+          $(".node-type-transfer").hide();
+          $(".node-type-freeze").show();
+          $(".node-type-unfreeze").hide();
+          $(".node-type-delegate").hide();
+          $(".node-type-undelegate").hide();
+          $(".node-type-claim").hide();
+          $(".node-type-withdraw").hide();
+          $(".node-type-unjail").hide();
+          $(".node-type-setaccountname").hide();
+        }
+        else if ($(this).val() == "CONTRACT_UNFREEZE") {
+          $(".node-type-transfer").hide();
+          $(".node-type-freeze").hide();
+          $(".node-type-unfreeze").show();
+          $(".node-type-delegate").hide();
+          $(".node-type-undelegate").hide();
+          $(".node-type-claim").hide();
+          $(".node-type-withdraw").hide();
+          $(".node-type-unjail").hide();
+          $(".node-type-setaccountname").hide();
+        }
+        else if ($(this).val() == "CONTRACT_DELEGATE") {
+          $(".node-type-transfer").hide();
+          $(".node-type-freeze").hide();
+          $(".node-type-unfreeze").hide();
+          $(".node-type-delegate").show();
+          $(".node-type-undelegate").hide();
+          $(".node-type-claim").hide();
+          $(".node-type-withdraw").hide();
+          $(".node-type-unjail").hide();
+          $(".node-type-setaccountname").hide();
+        }
+        else if ($(this).val() == "CONTRACT_UNDELEGATE") {
+          $(".node-type-transfer").hide();
+          $(".node-type-freeze").hide();
+          $(".node-type-unfreeze").hide();
+          $(".node-type-delegate").hide();
+          $(".node-type-undelegate").show();
+          $(".node-type-claim").hide();
+          $(".node-type-withdraw").hide();
+          $(".node-type-unjail").hide();
+          $(".node-type-setaccountname").hide();
+        }
+        else if ($(this).val() == "CONTRACT_CLAIM") {
+          $(".node-type-transfer").hide();
+          $(".node-type-freeze").hide();
+          $(".node-type-unfreeze").hide();
+          $(".node-type-delegate").hide();
+          $(".node-type-undelegate").hide();
+          $(".node-type-claim").show();
+          $(".node-type-withdraw").hide();
+          $(".node-type-unjail").hide();
+          $(".node-type-setaccountname").hide();
+        }
+        else if ($(this).val() == "CONTRACT_WITHDRAW") {
+          $(".node-type-transfer").hide();
+          $(".node-type-freeze").hide();
+          $(".node-type-unfreeze").hide();
+          $(".node-type-delegate").hide();
+          $(".node-type-undelegate").hide();
+          $(".node-type-claim").hide();
+          $(".node-type-withdraw").show();
+          $(".node-type-unjail").hide();
+          $(".node-type-setaccountname").hide();
+        }
+        else if ($(this).val() == "CONTRACT_UNFREEZE") {
+          $(".node-type-transfer").hide();
+          $(".node-type-freeze").hide();
+          $(".node-type-unfreeze").hide();
+          $(".node-type-delegate").hide();
+          $(".node-type-undelegate").hide();
+          $(".node-type-claim").hide();
+          $(".node-type-withdraw").hide();
+          $(".node-type-unjail").show();
+          $(".node-type-setaccountname").hide();
+        }
+        else if ($(this).val() == "CONTRACT_SET_ACCOUNT_NAME") {
+          $(".node-type-transfer").hide();
+          $(".node-type-freeze").hide();
+          $(".node-type-unfreeze").hide();
+          $(".node-type-delegate").hide();
+          $(".node-type-undelegate").hide();
+          $(".node-type-claim").hide();
+          $(".node-type-withdraw").hide();
+          $(".node-type-unjail").hide();
+          $(".node-type-setaccountname").show();
+        }
+        else {
+          $(".node-type-transfer").hide();
+          $(".node-type-freeze").hide();
+          $(".node-type-unfreeze").hide();
+          $(".node-type-delegate").hide();
+          $(".node-type-undelegate").hide();
+          $(".node-type-claim").hide();
+          $(".node-type-withdraw").hide();
+          $(".node-type-unjail").hide();
+          $(".node-type-setaccountname").hide();
+        }
+      });
+      $("#node-input-contract").trigger("change");
+    }
+  });
+</script>
+
+<script type="text/x-red" data-template-name="klever-transaction">
+    <div class="form-row">
+      <label for="node-input-account"><i class="fa fa-sign-in"></i> Account</label>
+      <input type="text" id="node-input-account">
+    </div>
+    <div class="form-row">
+      <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+      <input type="text" id="node-input-name" />
+    </div>
+    <div class="form-row">
+      <label for="node-input-contract"><i class="fa fa-handshake-o"></i> Contract</label>
+      <select id="node-input-contract" style="width:70%">
+        <option value="CONTRACT_TRANSFER">Transfer</option>
+        <option value="CONTRACT_FREEZE">Freeze</option>
+        <option value="CONTRACT_UNFREEZE">Unfreeze</option>
+        <option value="CONTRACT_DELEGATE">Delegate</option>
+        <option value="CONTRACT_UNDELEGATE">Undelegate</option>
+        <option value="CONTRACT_CLAIM">Claim</option>
+        <option value="CONTRACT_WITHDRAW">Withdraw</option>
+        <!--
+        <option value="CONTRACT_SELL_ORDER">Sell Order</option>
+        <option value="CONTRACT_BUY_ORDER">Buy Order</option>
+        <option value="CONTRACT_CANCEL_ORDER">Cancel Order</option>
+        -->
+        <option value="CONTRACT_UNJAIL">Unjail</option>
+        <option value="CONTRACT_SET_ACCOUNT_NAME">Set Account Name</option>
+        <option value="CONTRACT_MSG">--as given in msg.contract--</option>
+      </select>
+    </div>
+    <div class="form-row">
+      <label></label>
+    </div>
+
+    <!-- Contract: Transfer -->
+    <div class="form-row node-type-transfer">
+      <div class="form-row">
+        <label for="node-input-transferAmount"><i class="fa fa-money"></i> Amount</label>
+        <input type="text" id="node-input-transferAmount" style="text-align:end; width:70%">
+      </div>
+      <div class="form-row">
+        <label for="node-input-transferReceiver"><i class="fa fa-address-card"></i> Receiver</label>
+        <input type="text" id="node-input-transferReceiver" style="width:70%">
+      </div>
+      <div class="form-row">
+        <label for="node-input-transferAsset"><i class="fa fa-envelope"></i> Asset</label>
+        <input type="text" id="node-input-transferAsset" style="width:70%">
+      </div>
+    </div>
+
+    <!-- Contract: Freeze -->
+    <div class="form-row node-type-freeze">
+      <div class="form-row">
+        <label for="node-input-freezeAmount"><i class="fa fa-money"></i> Amount</label>
+        <input type="text" id="node-input-freezeAmount" style="text-align:end; width:70%">
+      </div>
+      <div class="form-row">
+        <label for="node-input-freezeAsset"><i class="fa fa-envelope"></i> Asset</label>
+        <input type="text" id="node-input-freezeAsset" style="width:70%">
+      </div>
+    </div>
+
+    <!-- Contract: Unfreeze -->
+    <div class="form-row node-type-unfreeze">
+      <div class="form-row">
+        <label for="node-input-unfreezeBucketID"><i class="fa fa-ticket"></i> BucketID</label>
+        <input type="text" id="node-input-unfreezeBucketID" style="text-align:end; width:70%">
+      </div>
+      <div class="form-row">
+        <label for="node-input-unfreezeAsset"><i class="fa fa-envelope"></i> Asset</label>
+        <input type="text" id="node-input-unfreezeAsset" style="width:70%">
+      </div>
+    </div>
+
+    <!-- Contract: Delegate -->
+    <div class="form-row node-type-delegate">
+      <div class="form-row">
+        <label for="node-input-delegateReceiver"><i class="fa fa-address-card"></i> Receiver</label>
+        <input type="text" id="node-input-delegateReceiver" style="width:70%">
+      </div>
+      <div class="form-row">
+        <label for="node-input-delegateBucketID"><i class="fa fa-ticket"></i> BucketID</label>
+        <input type="text" id="node-input-delegateBucketID" style="text-align:end; width:70%">
+      </div>
+    </div>
+
+    <!-- Contract: Undelegate -->
+    <div class="form-row node-type-undelegate">
+      <div class="form-row">
+        <label for="node-input-undelegateBucketID"><i class="fa fa-ticket"></i> BucketID</label>
+        <input type="text" id="node-input-undelegateBucketID" style="text-align:end; width:70%">
+      </div>
+    </div>
+
+    <!-- Contract: Claim -->
+    <div class="form-row node-type-claim">
+      <div class="form-row">
+        <label for="node-input-claimclaimType"><i class="fa fa-exchange"></i> ClaimType</label>
+        <select id="node-input-claimclaimType" style="width:70%">
+          <option value="0">Staking Claim</option>
+          <option value="1">Allowance Claim</option>
+          <option value="2">Market Claim</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <label for="node-input-claimId"><i class="fa fa-ticket"></i> Id</label>
+        <input type="text" id="node-input-claimId" style="text-align:end; width:70%">
+      </div>
+    </div>
+
+    <!-- Contract: Withdraw -->
+    <div class="form-row node-type-withdraw">
+      <div class="form-row">
+        <label for="node-input-withdrawAssetId"><i class="fa fa-envelope"></i> AssetId</label>
+        <input type="text" id="node-input-withdrawAssetId" style="width:70%">
+      </div>
+    </div>
+
+    <!-- Contract: Unjail -->
+    <div class="form-row node-type-unjail">
+    </div>
+
+    <!-- Contract: Set Account Name -->
+    <div class="form-row node-type-setaccountname">
+      <div class="form-row">
+        <label for="node-input-setaccountnameName"><i class="fa fa-quote-right"></i> Name</label>
+        <input type="text" id="node-input-setaccountnameName" style="width:70%">
+      </div>
+    </div>
+
+</script>
+
+<script type="text/x-red" data-help-name="klever-transaction">
+  <p>Send a transaction to the Kleverchain network.</p>
+
+  <h3>Inputs</h3>
+    <dl class="message-properties">
+      <dt class="optional">contract <span class="property-type">string</span></dt>
+      <dd> if not set in the node configuration panel, this property specifies the contract to execute on the kleverchain.</dd>
+    </dl>
+
+  <h3>Outputs</h3>
+    <dl class="message-properties">
+      <dt>payload <span class="property-type">object</span></dt>
+      <dd> the return value depends on the type of contract that has been choosen.</dd>
+    </dl>
+
+  <h3>Details</h3>
+    <p>The transaction node can be used to trigger a transaction on the kleverchain.
+    There are different types of contracts that can be executed. Each of the contracts requires different properties, that
+    can either be configured in the user interface or be given via the <code>msg.payload</code>.<br>
+    If no setting in the user interface is given, then the value from the <code>msg.payload</code> is taken. Otherwise the property in the
+    user interface has precedence.</p>
+
+  <h3>References</h3>
+    <ul>
+      <li><a href="https://github.com/0xf42/node-red-contrib-klever">GitHub</a> - the nodes github repository</li>
+      <li><a href="https://klever.gitbook.io/kleverchain-sdk/contract-details">Contract Details</a> - the official kleverchain documentation with contract details</li>
+    </ul>
+</script>
+

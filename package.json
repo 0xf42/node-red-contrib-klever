@@ -1,0 +1,46 @@
+{
+  "name": "@0xf42/node-red-contrib-klever",
+  "version": "0.1.7",
+  "description": "Nodes to connect to the Klever Ecosystem",
+  "dependencies": {
+    "@klever/sdk": "^2.0.1",
+    "debug": "^4.1.1",
+    "node-fetch": "^2.6.7"
+  },
+  "devDependencies": {
+    "dotenv": "^16.0.1",
+    "eslint": "^7.8.1"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/0xf42/node-red-contrib-klever"
+  },
+  "license": "MIT",
+  "keywords": [
+    "node-red",
+    "klever",
+    "KleverChain",
+    "https://klever.io/",
+    "https://klever.finance/",
+    "crypto",
+    "blockchain"
+  ],
+  "node-red": {
+    "version": ">=1.0.0",
+    "nodes": {
+      "Klever-Account": "klever-account.js",
+      "Klever-Transaction": "klever-transaction.js",
+      "Klever-Balance": "klever-balance.js"
+    }
+  },
+  "author": {
+    "name": "k1",
+    "email": ""
+  },
+  "scripts": {
+    "playground": "node ./test/playground"
+  }
+}
