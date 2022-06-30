@@ -1,6 +1,6 @@
 {
   "name": "@0xf42/node-red-contrib-klever",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "description": "Nodes to connect to the Klever Ecosystem",
   "dependencies": {
     "@klever/sdk": "^2.0.1",
@@ -9,7 +9,17 @@
   },
   "devDependencies": {
     "dotenv": "^16.0.1",
-    "eslint": "^7.8.1"
+    "eslint": "^8.0.1",
+    "@types/chai": "^4.2.0",
+    "@types/node-red": "*",
+    "chai": "^4.2.0",
+    "cors": "^2.8.5",
+    "eslint-plugin-mocha": "^6.3.0",
+    "mocha": "^9.1.3",
+    "node-red": "^2.1.1",
+    "node-red-node-test-helper": "^0.2.7",
+    "nyc": "^15.1.0",
+    "supports-color": "^7.1.0"
   },
   "engines": {
     "node": ">=18.0.0"
@@ -41,6 +51,9 @@
     "email": ""
   },
   "scripts": {
-    "playground": "node ./test/playground"
+    "playground": "node ./test/playground",
+    "test": "mocha",
+    "test_coverage": "nyc --reporter=text mocha",
+    "test_coverage_html": "nyc --reporter=html mocha"
   }
 }

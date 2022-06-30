@@ -1,5 +1,7 @@
 # Node-RED nodes for Klever
 
+![KleverLogo](./icons/klever.png)
+
 ## About
 
 The [Klever Finance Ecosystem](https://klever.finance/) has the goal to create innovative, easy-to-use and secure products powered by peer-to-peer and blockchain technologies. It is powered by a professional crypto company and a community of crypto enthusiasts which are involved in building, running, improving and supporting the Klever blockchain.
@@ -8,7 +10,7 @@ The [Klever Finance Ecosystem](https://klever.finance/) has the goal to create i
 Node-RED can be used for rapid application prototyping, service development, process automation and is especially popular in the field of the Internet of Things (IoT). Using the wide range of available nodes in the palette it is possible to connect to many devices, sensors, actors, internet services, databases, social media platforms or to create web-based user interfaces. Flows can be then deployed to the runtime in a single-click.
 The light-weight runtime is built on Node.js, taking full advantage of its event-driven, non-blocking model. This makes it very flexible and allows to run at the edge of the network, on low-cost hardware (e.g. Raspberry Pi) as well as in the cloud.
 
-This repository now adds direct support for the Klever Ecosystem within the Node-RED.
+This repository is a community driven project and adds direct support for the Klever Ecosystem within the Node-RED.
 
 By installing these nodes within Node-RED you can now use Node-RED to easily:
 
@@ -121,6 +123,10 @@ I.e. if you want to set the `receiver` parameter of the [Transfer Contract](http
 ### Why can't I install the nodes?
 
 The Klever SDK uses a special library (fetch) which is only available with node 18.x. Make sure to install the latest nodejs version from <https://nodejs.org>.
+
+## Disclaimer
+
+This repository is a community driven project. The nodes are not from <https://klever.finance/> but based on the official [Klever SDK](https://www.npmjs.com/package/@klever/sdk).
 
 ## License
 

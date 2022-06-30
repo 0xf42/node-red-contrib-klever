@@ -37,3 +37,9 @@ node_modules
 
 # Environment
 .env
+
+# Executables
+*.exe
+
+# Unit-Test
+.nyc_output
